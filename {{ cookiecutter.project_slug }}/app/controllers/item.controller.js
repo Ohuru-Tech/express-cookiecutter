@@ -5,7 +5,7 @@ const Op = db.Sequelize.Op;
 // Create and Save a new Item
 exports.create = (req, res) => {
   // Validate request
-  if (!req.body.title) {
+  if (!req.body.name) {
     res.status(400).send({
       message: "Content can not be empty!"
     });
@@ -13,18 +13,18 @@ exports.create = (req, res) => {
   }
 
   // Create a Item
-  const Item = {
-    title: req.body.title,
-    description: req.body.description,
-    published: req.body.published ? req.body.published : false
+  const item = {
+    name: req.body.name,
+    description: req.body.description
   };
 
   // Save Item in the database
-  Item.create(Item)
+  Item.create(item)
     .then(data => {
       res.send(data);
     })
     .catch(err => {
+      console.log(err);
       res.status(500).send({
         message:
           err.message || "Some error occurred while creating the Item."
@@ -34,8 +34,8 @@ exports.create = (req, res) => {
 
 // Retrieve all Items from the database.
 exports.findAll = (req, res) => {
-  const title = req.query.title;
-  var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
+  const name = req.query.name;
+  var condition = name ? { name: { [Op.like]: `%${name}%` } } : null;
 
   Item.findAll({ where: condition })
     .then(data => {
@@ -116,37 +116,6 @@ exports.delete = (req, res) => {
     .catch(err => {
       res.status(500).send({
         message: "Could not delete Item with id=" + id
-      });
-    });
-};
-
-// Delete all Items from the database.
-exports.deleteAll = (req, res) => {
-  Item.destroy({
-    where: {},
-    truncate: false
-  })
-    .then(nums => {
-      res.send({ message: `${nums} Items were deleted successfully!` });
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while removing all Items."
-      });
-    });
-};
-
-// find all published Item
-exports.findAllPublished = (req, res) => {
-  Item.findAll({ where: { published: true } })
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving Items."
       });
     });
 };
