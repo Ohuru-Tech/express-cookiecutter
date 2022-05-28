@@ -1,3 +1,3 @@
 module.exports = {
-  URL: {{ cookiecutter.db_url }},
+  URL: "{{ cookiecutter.db_url }}",
 };
